@@ -1,28 +1,48 @@
 import "reflect-metadata";
-import {createConnection} from "typeorm";
-import { Person } from "./Models/Person/Entities/Person";
+import {createConnection , useContainer, getMongoRepository} from "typeorm";
+import { ApolloServer } from "apollo-server";
+import { Container } from "typedi";
+import { seedDatabase } from './helper';
+import { Person } from "./Models/Person/Entities";
 import { PersonResolver } from './Models/Person/Resolver';
 import { buildSchema } from "type-graphql";
 
+export interface Context {
+  person: Person;
+}
+// register 3rd party IOC container
+useContainer(Container);
 
-const schema = buildSchema({
-    resolvers: [PersonResolver],
-  });
+async function bootstrap() {
+  try {
+    // create TypeORM connection
+    await createConnection().then(()=>{
+      //const Mong_Repo = getMongoRepository(Person);
+    });
+    // seed database with some data
+    const { defaultPerson } = await seedDatabase();
 
-createConnection().then(async connection => {
+    // build TypeGraphQL executable schema
+    const schema = await buildSchema({
+      resolvers: [PersonResolver],
+      container: Container
+    });
 
-    console.log("Inserting a new person into the database...");
-    const person = new Person();
-    person.firstName = "TttTimber";
-    person.lastName = "SSaw";
-    person.age = 25;
-    await connection.mongoManager.save(person);
-    console.log("Saved a new person with id: " + person.id);
+    // create mocked context
+    const context: Context = { person: defaultPerson };
 
-    console.log("Loading persons from the database...");
-    const persons = await connection.mongoManager.find(Person);
-    console.log("Loaded persons: ", persons);
+    // Create GraphQL server
+    const server = new ApolloServer({ 
+      schema,
+      context 
+    });
 
-    console.log("Here you can setup and run express/koa/any other framework.");
+    // Start the server
+    const { url } = await server.listen(4000);
+    console.log(`Server is running, GraphQL Playground available at ${url}`);
+  } catch (err) {
+    console.error(err);
+  }
+}
 
-}).catch(error => console.log(error));
+bootstrap();

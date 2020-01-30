@@ -1,7 +1,7 @@
 {
-   "name": "type-orm",
+   "name": "type-graphql-orm",
    "version": "0.0.1",
-   "description": "Awesome project developed with TypeORM.",
+   "description": "GraphQl project developed with TypeORM and Mongodb.",
    "devDependencies": {
       "@types/graphql": "^14.5.0",
       "@types/node": "^13.5.1",
@@ -10,11 +10,13 @@
       "typescript": "3.7.5"
    },
    "dependencies": {
+      "apollo-server": "^2.9.16",
       "class-validator": "^0.11.0",
       "graphql": "^14.6.0",
       "mongodb": "^3.5.2",
       "reflect-metadata": "^0.1.13",
       "type-graphql": "^0.17.6",
+      "typedi": "^0.8.0",
       "typeorm": "0.2.22",
       "typeorm-typedi-extensions": "^0.2.3"
    },

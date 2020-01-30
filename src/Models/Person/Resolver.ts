@@ -1,8 +1,11 @@
 import { Resolver, Query, Mutation, Arg, Ctx, Args, Authorized } from "type-graphql";
 import { InjectRepository } from "typeorm-typedi-extensions";
-import { MongoRepository, InsertResult, DeleteResult, InsertOneWriteOpResult, DeleteWriteOpResultObject, UpdateWriteOpResult, UpdateResult } from 'typeorm';
+import {
+  MongoRepository, InsertResult, DeleteResult, UpdateResult,
+  InsertOneWriteOpResult, DeleteWriteOpResultObject, UpdateWriteOpResult 
+} from 'typeorm';
 
-import { Person } from "./Entities/Person";
+import { Person } from "./Entities";
 import { NewInput, UpdateInput , ArgInput } from './DTO';
 
 @Resolver(of=>Person)
@@ -12,7 +15,7 @@ export class PersonResolver {
   ) {}
 
   @Query(returns => Person)
-  async recipe(@Arg("id") id: string) {
+  async person(@Arg("id") id: string) {
     return await this.Person_repo.findOne(id);
   }
 
@@ -33,7 +36,24 @@ export class PersonResolver {
     person.firstName = newPersonData.firstName;
     person.lastName = newPersonData.lastName;
     person.age = newPersonData.age;
-    return await this.Person_repo.save( person );
+    const result = await this.Person_repo.save( person );
+    console.log("savePerson : ",result);  // Success return person
+    return result;
+  }
+  @Mutation(returns => Person)
+  //@Authorized()
+  async createPerson(
+    @Arg("newPersonData") newPersonData: NewInput,
+    //@Ctx("person") person: Person,
+  ): Promise<Person> {
+    const person = this.Person_repo.create({
+      firstName : newPersonData.firstName,
+      lastName : newPersonData.lastName,
+      age : newPersonData.age
+    });
+    const result = await this.Person_repo.save( person );
+    console.log("savePerson : ",result);  // Success return person
+    return result;
   }
   @Mutation(returns => Person)
   //@Authorized()
@@ -41,7 +61,9 @@ export class PersonResolver {
     @Arg("newPersonData") newPersonData: NewInput,
     //@Ctx("person") person: Person,
   ): Promise<InsertResult> {
-    return await this.Person_repo.insert(newPersonData);
+    const result = await this.Person_repo.insert(newPersonData);
+    console.log("insertPerson : ",result);
+    return result;
   }
   @Mutation(returns => Person)
   //@Authorized()
@@ -54,7 +76,9 @@ export class PersonResolver {
           lastName: newPersonData.lastName,
           age: newPersonData.age
         }
-      return await this.Person_repo.insertOne(obj_L);
+      const result= await this.Person_repo.insertOne(obj_L);
+      console.log("insertOnePerson : ",result);
+      return result;
     }
 
   @Mutation(returns => Boolean)
@@ -65,14 +89,14 @@ export class PersonResolver {
   @Mutation(returns => Boolean)
   //@Authorized(Roles.Admin)
   async deleteOnePerson(
-        @Arg("Delete By Obj_L") Obj_L: UpdateInput
+        @Arg("DeleteObj") Obj_L: UpdateInput
       ): Promise<DeleteWriteOpResultObject> {
       return await this.Person_repo.deleteOne(Obj_L);
     }
   @Mutation(returns => Boolean)
   //@Authorized(Roles.Admin)
   async updateOnePerson(
-        @Arg("UpdatedPerson") Obj_L: Person,
+        @Arg("UpdatedPerson") Obj_L: UpdateInput,
         @Arg("newPersonData") updatePersonData: UpdateInput,
       ): Promise<UpdateWriteOpResult> {
       return await this.Person_repo.updateOne(Obj_L, updatePersonData);
@@ -84,7 +108,7 @@ export class PersonResolver {
       return await this.Person_repo.update(id, updatePersonData);
     }
     async updateManyPerson(
-        @Arg("UpdatedPerson") Obj_L: Person,
+        @Arg("UpdatedPerson") Obj_L: UpdateInput,
         @Arg("newPersonData") updatePersonData: UpdateInput,
       ): Promise<UpdateWriteOpResult> {
       return await this.Person_repo.updateMany(Obj_L, updatePersonData,{

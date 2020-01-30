@@ -1,4 +1,4 @@
-# Awesome Project Build with TypeORM
+# GraphQl Project Build with TypeORM and Mongodb
 
 Steps to run this project:
 

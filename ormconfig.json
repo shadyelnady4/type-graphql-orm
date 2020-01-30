@@ -2,8 +2,12 @@
    "type": "mongodb",
    "database": "typeGQL",
    "synchronize": true,
-   "logging": false,
+   "logging": true,
    "useNewUrlParser": true,
+   "useUnifiedTopology": true,
+   "logger": "advanced-console",
+   "dropSchema": false,
+   "cache": true,
    "entities": [
       "src/Models/**/Entities/**/*.ts"
    ],
