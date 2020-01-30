@@ -1,0 +1,21 @@
+{
+   "type": "mongodb",
+   "database": "typeGQL",
+   "synchronize": true,
+   "logging": false,
+   "useNewUrlParser": true,
+   "entities": [
+      "src/Models/**/Entities/**/*.ts"
+   ],
+   "migrations": [
+      "src/Models/**/migration/*.ts"
+   ],
+   "subscribers": [
+      "src/Models/**/subscriber/**/*.ts"
+   ],
+   "cli": {
+      "entitiesDir": "src/Models/**/Entities",
+      "migrationsDir": "src/Models/**/migration",
+      "subscribersDir": "src/Models/**/subscriber"
+   }
+}

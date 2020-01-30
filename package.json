@@ -1,0 +1,25 @@
+{
+   "name": "type-orm",
+   "version": "0.0.1",
+   "description": "Awesome project developed with TypeORM.",
+   "devDependencies": {
+      "@types/graphql": "^14.5.0",
+      "@types/node": "^13.5.1",
+      "nodemon": "^2.0.2",
+      "ts-node": "8.6.2",
+      "typescript": "3.7.5"
+   },
+   "dependencies": {
+      "class-validator": "^0.11.0",
+      "graphql": "^14.6.0",
+      "mongodb": "^3.5.2",
+      "reflect-metadata": "^0.1.13",
+      "type-graphql": "^0.17.6",
+      "typeorm": "0.2.22",
+      "typeorm-typedi-extensions": "^0.2.3"
+   },
+   "scripts": {
+      "start": "ts-node src/index.ts",
+      "watch": "nodemon"
+   }
+}
